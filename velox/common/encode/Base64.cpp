@@ -46,47 +46,6 @@ constexpr const Base64::Charset kBase64UrlCharset = {
     'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', '_'};
 
-// Reverse lookup tables for decoding
-constexpr const Base64::ReverseIndex kBase64ReverseIndexTable = {
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 62,  255,
-    255, 255, 63,  52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  255, 255,
-    255, 255, 255, 255, 255, 0,   1,   2,   3,   4,   5,   6,   7,   8,   9,
-    10,  11,  12,  13,  14,  15,  16,  17,  18,  19,  20,  21,  22,  23,  24,
-    25,  255, 255, 255, 255, 255, 255, 26,  27,  28,  29,  30,  31,  32,  33,
-    34,  35,  36,  37,  38,  39,  40,  41,  42,  43,  44,  45,  46,  47,  48,
-    49,  50,  51,  255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-    255};
-
-constexpr const Base64::ReverseIndex kBase64UrlReverseIndexTable = {
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 62,  255,
-    62,  255, 63,  52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  255, 255,
-    255, 255, 255, 255, 255, 0,   1,   2,   3,   4,   5,   6,   7,   8,   9,
-    10,  11,  12,  13,  14,  15,  16,  17,  18,  19,  20,  21,  22,  23,  24,
-    25,  255, 255, 255, 255, 63,  255, 26,  27,  28,  29,  30,  31,  32,  33,
-    34,  35,  36,  37,  38,  39,  40,  41,  42,  43,  44,  45,  46,  47,  48,
-    49,  50,  51,  255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-    255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-    255};
-
 // Validate the character in charset with ReverseIndex table
 constexpr bool checkForwardIndex(
     uint8_t index,
@@ -102,7 +61,7 @@ static_assert(
     checkForwardIndex(
         sizeof(kBase64Charset) - 1,
         kBase64Charset,
-        kBase64ReverseIndexTable),
+        Base64::kBase64ReverseIndexTable),
     "kBase64Charset has incorrect entries");
 
 // Verify that for every entry in kBase64UrlCharset, the corresponding entry
@@ -111,7 +70,7 @@ static_assert(
     checkForwardIndex(
         sizeof(kBase64UrlCharset) - 1,
         kBase64UrlCharset,
-        kBase64UrlReverseIndexTable),
+        Base64::kBase64UrlReverseIndexTable),
     "kBase64UrlCharset has incorrect entries");
 
 // Searches for a character within a charset up to a certain index.
@@ -140,9 +99,9 @@ constexpr bool checkReverseIndex(
 // entry in kBase64Charset is correct.
 static_assert(
     checkReverseIndex(
-        sizeof(kBase64ReverseIndexTable) - 1,
+        sizeof(Base64::kBase64ReverseIndexTable) - 1,
         kBase64Charset,
-        kBase64ReverseIndexTable),
+        Base64::kBase64ReverseIndexTable),
     "kBase64ReverseIndexTable has incorrect entries.");
 
 // Verify that for every entry in kBase64ReverseIndexTable, the corresponding
@@ -162,16 +121,17 @@ template <class T>
 std::string Base64::encodeImpl(
     const T& input,
     const Charset& charset,
-    bool includePadding) {
-  size_t encodedSize = calculateEncodedSize(input.size(), includePadding);
+    bool includePadding,
+    bool chunkBase64) {
+  size_t encodedSize = calculateEncodedSize(input.size(), includePadding, chunkBase64);
   std::string encodedResult;
   encodedResult.resize(encodedSize);
-  encodeImpl(input, charset, includePadding, encodedResult.data());
+  encodeImpl(input, charset, includePadding, encodedResult.data(), chunkBase64);
   return encodedResult;
 }
 
 // static
-size_t Base64::calculateEncodedSize(size_t inputSize, bool withPadding) {
+size_t Base64::calculateEncodedSize(size_t inputSize, bool withPadding, bool chunkBase64) {
   if (inputSize == 0) {
     return 0;
   }
@@ -182,19 +142,27 @@ size_t Base64::calculateEncodedSize(size_t inputSize, bool withPadding) {
     // If the padding was not requested, subtract the padding bytes.
     encodedSize -= (3 - (inputSize % 3)) % 3;
   }
+  if (chunkBase64) {
+    // For "\r\n".
+    encodedSize += (encodedSize - 1) / 76 * 2;
+  }
   return encodedSize;
 }
 
 // static
-void Base64::encode(const char* input, size_t inputSize, char* output) {
+void Base64::encode(const char* input, size_t inputSize, char* output, bool chunkBase64) {
   encodeImpl(
-      folly::StringPiece(input, inputSize), kBase64Charset, true, output);
+      folly::StringPiece(input, inputSize), kBase64Charset, true, output, chunkBase64);
 }
 
 // static
 void Base64::encodeUrl(const char* input, size_t inputSize, char* output) {
   encodeImpl(
-      folly::StringPiece(input, inputSize), kBase64UrlCharset, true, output);
+      folly::StringPiece(input, inputSize),
+      kBase64UrlCharset,
+      true,
+      output,
+      true);
 }
 
 // static
@@ -203,7 +171,8 @@ void Base64::encodeImpl(
     const T& input,
     const Charset& charset,
     bool includePadding,
-    char* outputBuffer) {
+    char* outputBuffer,
+    bool chunkBase64) {
   auto inputSize = input.size();
   if (inputSize == 0) {
     return;
@@ -214,7 +183,8 @@ void Base64::encodeImpl(
 
   // For each group of 3 bytes (24 bits) in the input, split that into
   // 4 groups of 6 bits and encode that using the supplied charset lookup
-  for (; inputSize > 2; inputSize -= 3) {
+  unsigned char sum = 0;
+  for (; inputSize > 2;) {
     uint32_t inputBlock = static_cast<uint8_t>(*inputIterator++) << 16;
     inputBlock |= static_cast<uint8_t>(*inputIterator++) << 8;
     inputBlock |= static_cast<uint8_t>(*inputIterator++);
@@ -223,6 +193,17 @@ void Base64::encodeImpl(
     *outputPointer++ = charset[(inputBlock >> 12) & 0x3f];
     *outputPointer++ = charset[(inputBlock >> 6) & 0x3f];
     *outputPointer++ = charset[inputBlock & 0x3f];
+
+    inputSize -= 3;
+
+    if (chunkBase64) {
+      sum += 3;
+      if (sum == 57 && inputSize > 0) {
+        sum = 0;
+        *outputPointer++ = '\r';
+        *outputPointer++ = '\n';
+      }
+    }
   }
 
   if (inputSize > 0) {
@@ -249,13 +230,13 @@ void Base64::encodeImpl(
 }
 
 // static
-std::string Base64::encode(folly::StringPiece text) {
-  return encodeImpl(text, kBase64Charset, true);
+std::string Base64::encode(folly::StringPiece text, bool chunkBase64) {
+  return encodeImpl(text, kBase64Charset, true, chunkBase64);
 }
 
 // static
-std::string Base64::encode(const char* input, size_t inputSize) {
-  return encode(folly::StringPiece(input, inputSize));
+std::string Base64::encode(const char* input, size_t inputSize, bool chunkBase64) {
+  return encode(folly::StringPiece(input, inputSize), chunkBase64);
 }
 
 namespace {
@@ -303,8 +284,8 @@ class IOBufWrapper {
 } // namespace
 
 // static
-std::string Base64::encode(const folly::IOBuf* inputBuffer) {
-  return encodeImpl(IOBufWrapper(inputBuffer), kBase64Charset, true);
+std::string Base64::encode(const folly::IOBuf* inputBuffer, bool chunkBase64) {
+  return encodeImpl(IOBufWrapper(inputBuffer), kBase64Charset, true, chunkBase64);
 }
 
 // static
@@ -320,7 +301,7 @@ void Base64::decode(
     const std::pair<const char*, int32_t>& payload,
     std::string& decodedOutput) {
   size_t inputSize = payload.second;
-  decodedOutput.resize(calculateDecodedSize(payload.first, inputSize));
+  decodedOutput.resize(calculateDecodedSize(payload.first, inputSize, kBase64ReverseIndexTable));
   decode(payload.first, inputSize, decodedOutput.data(), decodedOutput.size());
 }
 
@@ -342,6 +323,21 @@ uint8_t Base64::base64ReverseLookup(
 }
 
 // static
+uint8_t Base64::tryBase64ReverseLookup(
+    const char*& input,
+    const Base64::ReverseIndex& reverseIndex) {
+  while (true) {
+    auto reverseLookupValue = reverseIndex[static_cast<uint8_t>(*input)];
+    input++;
+    if (reverseLookupValue >= 0x40) {
+      continue;
+    } else {
+      return reverseLookupValue;
+    }
+  }
+}
+
+// static
 size_t Base64::decode(
     const char* input,
     size_t inputSize,
@@ -352,35 +348,47 @@ size_t Base64::decode(
 }
 
 // static
-size_t Base64::calculateDecodedSize(const char* input, size_t& inputSize) {
+size_t Base64::calculateDecodedSize(
+    const char* input,
+    size_t& inputSize,
+    const ReverseIndex& reverseIndex) {
   if (inputSize == 0) {
     return 0;
   }
 
-  // Check if the input string is padded
-  if (isPadded(input, inputSize)) {
-    // If padded, ensure that the string length is a multiple of the encoded
-    // block size
-    if (inputSize % kEncodedBlockByteSize != 0) {
-      VELOX_USER_FAIL(
-          "Base64::decode() - invalid input string: "
-          "string length is not a multiple of 4.");
+  size_t filteredInputSize = 0;
+  size_t paddingSize = 0;
+  for (int i = 0; i < inputSize; i++) {
+    char c = input[i];
+    if (c == kPadding) {
+      i++;
+      paddingSize++;
+      while (i < inputSize) {
+        if (input[i] != kPadding) {
+          VELOX_USER_FAIL(
+              "Base64::decode() - the characters after the padding symbol must all be padding.");
+        }
+        i++;
+        paddingSize++;
+      }
+    } else {
+      auto reverseLookupValue = reverseIndex[static_cast<uint8_t>(c)];
+      if (reverseLookupValue >= 0x40) {
+        // Skip invalid character
+        continue;
+      } else {
+        filteredInputSize++;
+      }
     }
-
-    auto decodedSize =
-        (inputSize * kBinaryBlockByteSize) / kEncodedBlockByteSize;
-    auto paddingCount = numPadding(input, inputSize);
-    inputSize -= paddingCount;
-
-    // Adjust the needed size by deducting the bytes corresponding to the
-    // padding from the calculated size.
-    return decodedSize -
-        ((paddingCount * kBinaryBlockByteSize) + (kEncodedBlockByteSize - 1)) /
-        kEncodedBlockByteSize;
   }
-  // If not padded, Calculate extra bytes, if any
-  auto extraBytes = inputSize % kEncodedBlockByteSize;
-  auto decodedSize = (inputSize / kEncodedBlockByteSize) * kBinaryBlockByteSize;
+
+  // Update inputSize
+  inputSize = inputSize - paddingSize;
+
+  // Calculate extra bytes, if any
+  auto extraBytes = filteredInputSize % kEncodedBlockByteSize;
+  auto decodedSize =
+      (filteredInputSize / kEncodedBlockByteSize) * kBinaryBlockByteSize;
 
   // Adjust the needed size for extra bytes, if present
   if (extraBytes) {
@@ -388,6 +396,10 @@ size_t Base64::calculateDecodedSize(const char* input, size_t& inputSize) {
       VELOX_USER_FAIL(
           "Base64::decode() - invalid input string: "
           "string length cannot be 1 more than a multiple of 4.");
+    }
+    if (paddingSize != 0 && paddingSize + extraBytes < kEncodedBlockByteSize) {
+      VELOX_USER_FAIL(
+          "Base64::decode() - invalid input string: string length is not a multiple of 4.");
     }
     decodedSize += (extraBytes * kBinaryBlockByteSize) / kEncodedBlockByteSize;
   }
@@ -406,40 +418,35 @@ size_t Base64::decodeImpl(
     return 0;
   }
 
-  auto decodedSize = calculateDecodedSize(input, inputSize);
+  auto decodedSize = calculateDecodedSize(input, inputSize, reverseIndex);
   if (outputSize < decodedSize) {
     VELOX_USER_FAIL(
         "Base64::decode() - invalid output string: "
         "output string is too small.");
   }
 
-  // Handle full groups of 4 characters
-  for (; inputSize > 4; inputSize -= 4, input += 4, outputBuffer += 3) {
+  while (true) {
     // Each character of the 4 encodes 6 bits of the original, grab each with
     // the appropriate shifts to rebuild the original and then split that back
     // into the original 8-bit bytes.
     uint32_t decodedBlock =
-        (base64ReverseLookup(input[0], reverseIndex) << 18) |
-        (base64ReverseLookup(input[1], reverseIndex) << 12) |
-        (base64ReverseLookup(input[2], reverseIndex) << 6) |
-        base64ReverseLookup(input[3], reverseIndex);
-    outputBuffer[0] = (decodedBlock >> 16) & 0xff;
-    outputBuffer[1] = (decodedBlock >> 8) & 0xff;
-    outputBuffer[2] = decodedBlock & 0xff;
-  }
+        (tryBase64ReverseLookup(input, reverseIndex) << 18) |
+        (tryBase64ReverseLookup(input, reverseIndex) << 12);
+    *outputBuffer++ = (decodedBlock >> 16) & 0xff;
+    if (--decodedSize == 0) {
+      break;
+    }
 
-  // Handle the last 2-4 characters. This is similar to the above, but the
-  // last 2 characters may or may not exist.
-  DCHECK(inputSize >= 2);
-  uint32_t decodedBlock = (base64ReverseLookup(input[0], reverseIndex) << 18) |
-      (base64ReverseLookup(input[1], reverseIndex) << 12);
-  outputBuffer[0] = (decodedBlock >> 16) & 0xff;
-  if (inputSize > 2) {
-    decodedBlock |= base64ReverseLookup(input[2], reverseIndex) << 6;
-    outputBuffer[1] = (decodedBlock >> 8) & 0xff;
-    if (inputSize > 3) {
-      decodedBlock |= base64ReverseLookup(input[3], reverseIndex);
-      outputBuffer[2] = decodedBlock & 0xff;
+    decodedBlock |= tryBase64ReverseLookup(input, reverseIndex) << 6;
+    *outputBuffer++ = (decodedBlock >> 8) & 0xff;
+    if (--decodedSize == 0) {
+      break;
+    }
+
+    decodedBlock |= tryBase64ReverseLookup(input, reverseIndex);
+    *outputBuffer++ = decodedBlock & 0xff;
+    if (--decodedSize == 0) {
+      break;
     }
   }
 
@@ -447,18 +454,18 @@ size_t Base64::decodeImpl(
 }
 
 // static
-std::string Base64::encodeUrl(folly::StringPiece text) {
-  return encodeImpl(text, kBase64UrlCharset, false);
+std::string Base64::encodeUrl(folly::StringPiece text, bool chunkBase64) {
+  return encodeImpl(text, kBase64UrlCharset, false, chunkBase64);
 }
 
 // static
-std::string Base64::encodeUrl(const char* input, size_t inputSize) {
-  return encodeUrl(folly::StringPiece(input, inputSize));
+std::string Base64::encodeUrl(const char* input, size_t inputSize, bool chunkBase64) {
+  return encodeUrl(folly::StringPiece(input, inputSize), chunkBase64);
 }
 
 // static
-std::string Base64::encodeUrl(const folly::IOBuf* inputBuffer) {
-  return encodeImpl(IOBufWrapper(inputBuffer), kBase64UrlCharset, false);
+std::string Base64::encodeUrl(const folly::IOBuf* inputBuffer, bool chunkBase64) {
+  return encodeImpl(IOBufWrapper(inputBuffer), kBase64UrlCharset, false, chunkBase64);
 }
 
 // static
@@ -467,8 +474,7 @@ void Base64::decodeUrl(
     size_t inputSize,
     char* outputBuffer,
     size_t outputSize) {
-  decodeImpl(
-      input, inputSize, outputBuffer, outputSize, kBase64UrlReverseIndexTable);
+  decodeImpl(input, inputSize, outputBuffer, outputSize, kBase64UrlReverseIndexTable);
 }
 
 // static

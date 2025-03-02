@@ -437,9 +437,7 @@ TEST_F(BinaryFunctionsTest, fromBase64) {
   VELOX_ASSERT_USER_THROW(
       fromBase64("YQ="),
       "Base64::decode() - invalid input string: string length is not a multiple of 4.");
-  VELOX_ASSERT_USER_THROW(
-      fromBase64("YQ==="),
-      "Base64::decode() - invalid input string: string length is not a multiple of 4.");
+  EXPECT_EQ("a", fromBase64("YQ==="));
 
   // Check encoded strings without padding
   EXPECT_EQ("a", fromBase64("YQ"));
@@ -469,7 +467,7 @@ TEST_F(BinaryFunctionsTest, fromBase64Url) {
   // the encoded string input from base 64 url should be multiple of 4 and must
   // not contain invalid char like '+' and '/'
   EXPECT_THROW(fromBase64Url("YQ="), VeloxUserError);
-  EXPECT_THROW(fromBase64Url("YQ==="), VeloxUserError);
+  EXPECT_EQ("a", fromBase64Url("YQ==="));
   EXPECT_THROW(fromBase64Url("YQ=+"), VeloxUserError);
   EXPECT_THROW(fromBase64Url("YQ=/"), VeloxUserError);
 }

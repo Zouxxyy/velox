@@ -284,6 +284,16 @@ struct ToBase64Function {
     result.resize(encoding::Base64::calculateEncodedSize(input.size()));
     encoding::Base64::encode(input.data(), input.size(), result.data());
   }
+
+  FOLLY_ALWAYS_INLINE void call(
+      out_type<Varchar>& result,
+      const arg_type<Varbinary>& input,
+      const arg_type<bool>& chunkBase64) {
+    result.resize(encoding::Base64::calculateEncodedSize(
+        input.size(), true, chunkBase64));
+    encoding::Base64::encode(
+        input.data(), input.size(), result.data(), chunkBase64);
+  }
 };
 
 template <typename TExec>
@@ -309,8 +319,10 @@ struct FromBase64UrlFunction {
       out_type<Varbinary>& result,
       const arg_type<Varchar>& input) {
     auto inputSize = input.size();
-    result.resize(
-        encoding::Base64::calculateDecodedSize(input.data(), inputSize));
+    result.resize(encoding::Base64::calculateDecodedSize(
+        input.data(),
+        inputSize,
+        encoding::Base64::kBase64UrlReverseIndexTable));
     encoding::Base64::decodeUrl(
         input.data(), inputSize, result.data(), result.size());
   }

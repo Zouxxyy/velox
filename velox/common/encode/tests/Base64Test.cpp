@@ -24,6 +24,55 @@ namespace facebook::velox::encoding {
 
 class Base64Test : public ::testing::Test {};
 
+TEST_F(Base64Test, sparkBase64) {
+  // base64
+  std::string s1(57, 'a');
+  EXPECT_EQ(
+      "YWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFh",
+      Base64::encode(folly::StringPiece(s1)));
+  EXPECT_EQ(s1, Base64::decode(Base64::encode(folly::StringPiece(s1))));
+
+  std::string s2(58, 'a');
+  EXPECT_EQ(
+      "YWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFh\r\nYQ==",
+      Base64::encode(folly::StringPiece(s2)));
+  EXPECT_EQ(s2, Base64::decode(Base64::encode(folly::StringPiece(s2))));
+
+  std::string s3(114, 'a');
+  EXPECT_EQ(
+      "YWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFh\r\nYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFh",
+      Base64::encode(folly::StringPiece(s3)));
+  EXPECT_EQ(s3, Base64::decode(Base64::encode(folly::StringPiece(s3))));
+
+  std::string s4(115, 'a');
+  EXPECT_EQ(
+      "YWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFh\r\nYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFh\r\nYQ==",
+      Base64::encode(folly::StringPiece(s4)));
+  EXPECT_EQ(s4, Base64::decode(Base64::encode(folly::StringPiece(s4))));
+
+  // unbase64
+  EXPECT_EQ("ab", Base64::decode(folly::StringPiece("YWJ")));
+  EXPECT_EQ("ab", Base64::decode(folly::StringPiece("YW J")));
+  EXPECT_EQ("ab", Base64::decode(folly::StringPiece("YWJ?")));
+  EXPECT_EQ("abB", Base64::decode(folly::StringPiece("YW J????????C")));
+  VELOX_ASSERT_THROW(
+      Base64::decode(folly::StringPiece("ab==tm")),
+      "Base64::decode() - the characters after the padding symbol must all be padding.")
+  VELOX_ASSERT_THROW(
+      Base64::decode(folly::StringPiece("Y")),
+      "Base64::decode() - invalid input string: string length cannot be 1 more than a multiple of 4.")
+  EXPECT_EQ("a", Base64::decode(folly::StringPiece("YQ")));
+  VELOX_ASSERT_THROW(
+      Base64::decode(folly::StringPiece("YQ=")),
+      "Base64::decode() - invalid input string: string length is not a multiple of 4.")
+  EXPECT_EQ("a", Base64::decode(folly::StringPiece("YQ==")));
+  EXPECT_EQ("a", Base64::decode(folly::StringPiece("YQ===")));
+  EXPECT_EQ("a", Base64::decode(folly::StringPiece("YQ====")));
+  EXPECT_EQ("a", Base64::decode(folly::StringPiece("YQ=====")));
+  EXPECT_EQ("a", Base64::decode(folly::StringPiece("YQ======")));
+  EXPECT_EQ("a", Base64::decode(folly::StringPiece("YQ=======")));
+}
+
 TEST_F(Base64Test, fromBase64) {
   EXPECT_EQ(
       "Hello, World!",
@@ -64,7 +113,7 @@ TEST_F(Base64Test, calculateDecodedSizeProperSize) {
   encoded_size = 21;
   VELOX_ASSERT_THROW(
       Base64::calculateDecodedSize("SGVsbG8sIFdvcmxkIQ==", encoded_size),
-      "Base64::decode() - invalid input string: string length cannot be 1 more than a multiple of 4.");
+      "Base64::decode() - the characters after the padding symbol must all be padding.")
 
   encoded_size = 32;
   EXPECT_EQ(

@@ -40,29 +40,82 @@ class Base64 {
   /// within the encoding base.
   using ReverseIndex = std::array<uint8_t, kReverseIndexSize>;
 
+  // Reverse lookup tables for decoding
+  static constexpr const Base64::ReverseIndex kBase64ReverseIndexTable = {
+      255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+      255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+      255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 62,  255,
+      255, 255, 63,  52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  255, 255,
+      255, 255, 255, 255, 255, 0,   1,   2,   3,   4,   5,   6,   7,   8,   9,
+      10,  11,  12,  13,  14,  15,  16,  17,  18,  19,  20,  21,  22,  23,  24,
+      25,  255, 255, 255, 255, 255, 255, 26,  27,  28,  29,  30,  31,  32,  33,
+      34,  35,  36,  37,  38,  39,  40,  41,  42,  43,  44,  45,  46,  47,  48,
+      49,  50,  51,  255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+      255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+      255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+      255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+      255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+      255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+      255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+      255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+      255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+      255};
+
+  static constexpr const Base64::ReverseIndex kBase64UrlReverseIndexTable = {
+      255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+      255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+      255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 62,  255,
+      62,  255, 63,  52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  255, 255,
+      255, 255, 255, 255, 255, 0,   1,   2,   3,   4,   5,   6,   7,   8,   9,
+      10,  11,  12,  13,  14,  15,  16,  17,  18,  19,  20,  21,  22,  23,  24,
+      25,  255, 255, 255, 255, 63,  255, 26,  27,  28,  29,  30,  31,  32,  33,
+      34,  35,  36,  37,  38,  39,  40,  41,  42,  43,  44,  45,  46,  47,  48,
+      49,  50,  51,  255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+      255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+      255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+      255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+      255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+      255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+      255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+      255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+      255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+      255};
+
   /// Encodes the specified number of characters from the 'input'.
-  static std::string encode(const char* input, size_t inputSize);
+  static std::string
+  encode(const char* input, size_t inputSize, bool chunkBase64 = true);
 
   /// Encodes the specified text.
-  static std::string encode(folly::StringPiece text);
+  static std::string encode(folly::StringPiece text, bool chunkBase64 = true);
 
   /// Encodes the specified IOBuf data.
-  static std::string encode(const folly::IOBuf* inputBuffer);
+  static std::string encode(
+      const folly::IOBuf* inputBuffer,
+      bool chunkBase64 = true);
 
   /// Encodes the specified number of characters from the 'input' and writes the
   /// result to the 'outputBuffer'. The output must have enough space as
   /// returned by the calculateEncodedSize().
-  static void encode(const char* input, size_t inputSize, char* outputBuffer);
+  static void encode(
+      const char* input,
+      size_t inputSize,
+      char* outputBuffer,
+      bool chunkBase64 = true);
 
   /// Encodes the specified number of characters from the 'input' using URL
   /// encoding.
-  static std::string encodeUrl(const char* input, size_t inputSize);
+  static std::string
+  encodeUrl(const char* input, size_t inputSize, bool chunkBase64 = true);
 
   /// Encodes the specified text using URL encoding.
-  static std::string encodeUrl(folly::StringPiece text);
+  static std::string encodeUrl(
+      folly::StringPiece text,
+      bool chunkBase64 = true);
 
   /// Encodes the specified IOBuf data using URL encoding.
-  static std::string encodeUrl(const folly::IOBuf* inputBuffer);
+  static std::string encodeUrl(
+      const folly::IOBuf* inputBuffer,
+      bool chunkBase64 = true);
 
   /// Encodes the specified number of characters from the 'input' and writes the
   /// result to the 'outputBuffer' using URL encoding. The output must have
@@ -110,11 +163,17 @@ class Base64 {
       size_t outputSize);
 
   /// Calculates the encoded size based on input 'inputSize'.
-  static size_t calculateEncodedSize(size_t inputSize, bool withPadding = true);
+  static size_t calculateEncodedSize(
+      size_t inputSize,
+      bool withPadding = true,
+      bool chunkBase64 = true);
 
   /// Returns the actual size of the decoded data. Removes the padding
   /// length from the input data 'inputSize'.
-  static size_t calculateDecodedSize(const char* input, size_t& inputSize);
+  static size_t calculateDecodedSize(
+      const char* input,
+      size_t& inputSize,
+      const ReverseIndex& reverseIndex = kBase64ReverseIndexTable);
 
  private:
   // Padding character used in encoding.
@@ -141,10 +200,17 @@ class Base64 {
       char encodedChar,
       const ReverseIndex& reverseIndex);
 
+  static uint8_t tryBase64ReverseLookup(
+      const char*& input,
+      const ReverseIndex& reverseIndex);
+
   // Encodes the specified data using the provided charset.
   template <class T>
-  static std::string
-  encodeImpl(const T& input, const Charset& charset, bool includePadding);
+  static std::string encodeImpl(
+      const T& input,
+      const Charset& charset,
+      bool includePadding,
+      bool chunkBase64);
 
   // Encodes the specified data using the provided charset.
   template <class T>
@@ -152,7 +218,8 @@ class Base64 {
       const T& input,
       const Charset& charset,
       bool includePadding,
-      char* outputBuffer);
+      char* outputBuffer,
+      bool chunkBase64);
 
   // Decodes the specified data using the provided reverse lookup table.
   static size_t decodeImpl(

@@ -44,6 +44,9 @@ void registerBinaryFunctions(const std::string& prefix) {
       {prefix + "sha1"});
   registerFunction<Sha2HexStringFunction, Varchar, Varbinary, int32_t>(
       {prefix + "sha2"});
+  registerFunction<ToBase64Function, Varchar, Varbinary>({prefix + "base64"});
+  registerFunction<ToBase64Function, Varchar, Varbinary, bool>({prefix + "base64"});
+  registerFunction<FromBase64Function, Varbinary, Varchar>({prefix + "unbase64"});
 }
 
 } // namespace facebook::velox::functions::sparksql
