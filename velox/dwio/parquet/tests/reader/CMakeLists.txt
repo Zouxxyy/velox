@@ -53,7 +53,7 @@ target_link_libraries(velox_dwio_parquet_reader_benchmark
 
 add_executable(
   velox_dwio_parquet_reader_test
-  ParquetReaderTest.cpp ParquetReaderBenchmarkTest.cpp BloomFilterTest.cpp)
+  ParquetReaderTest.cpp ParquetReaderBenchmarkTest.cpp BloomFilterTest.cpp MyParquetTest.cpp)
 add_test(
   NAME velox_dwio_parquet_reader_test
   COMMAND velox_dwio_parquet_reader_test
