@@ -64,6 +64,7 @@ class ParquetReaderTest : public ParquetTestBase {
 };
 
 TEST_F(ParquetReaderTest, parseSample) {
+  // learn it
   // sample.parquet holds two columns (a: BIGINT, b: DOUBLE) and
   // 20 rows (10 rows per group). Group offsets are 153 and 614.
   // Data is in plain uncompressed format:
